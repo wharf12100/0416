@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校務管理系統 - 跨國銜轉個案研究</title>
+    <title>黑板上看不懂的文字：跨國銜轉教育的教學難題</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
@@ -11,6 +11,9 @@
             --sys-blue: #1e40af;
             --sys-gray: #f3f4f6;
             --sys-border: #d1d5db;
+        }
+        html, body {
+            min-height: 100%;
         }
         body {
             font-family: 'Noto Sans TC', sans-serif;
@@ -20,7 +23,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 100vh;
+            min-height: 100dvh;
         }
         .window-container {
             width: 100%;
@@ -30,7 +33,8 @@
             box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible;
+            position: relative;
         }
         .window-header {
             background: var(--sys-blue);
@@ -51,425 +55,21 @@
             gap: 15px;
             color: #374151;
         }
+        .system-menu span {
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+        .system-menu span:hover {
+            background: #d1d5db;
+        }
         .main-layout {
             display: flex;
             flex: 1;
             background: white;
+            min-height: 0;
         }
         .sidebar {
             width: 220px;
             background: #f9fafb;
             border-right: 1px solid var(--sys-border);
             padding: 20px 15px;
-            display: none;
-        }
-        .content-area {
-            flex: 1;
-            padding: 30px 40px;
-            overflow-y: auto;
-            max-height: 85vh;
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        .locked-section {
-            display: none; /* 修改為完全隱藏 */
-            opacity: 0;
-        }
-        .unlocked-section {
-            display: block; /* 解鎖後顯示 */
-            opacity: 1;
-            filter: none;
-            animation: fadeIn 0.8s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .system-progress-container {
-            width: 100%;
-            background: #cbd5e1;
-            height: 18px;
-            border: 1px solid #64748b;
-            margin: 10px 0;
-            position: relative;
-        }
-        #systemProgressBar {
-            background: #22c55e;
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        .progress-text {
-            position: absolute;
-            right: 5px;
-            top: 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            line-height: 18px;
-            color: black;
-            font-weight: bold;
-        }
-        .sys-button {
-            border: 1px solid #1f2937;
-            box-shadow: 2px 2px 0px #1f2937;
-            transition: all 0.1s;
-        }
-        .sys-button:active {
-            box-shadow: 0px 0px 0px #1f2937;
-            transform: translate(1px, 1px);
-        }
-        .note-box {
-            background-color: #fffbeb;
-            border-left: 4px solid #f59e0b;
-            padding: 10px;
-            font-size: 0.85rem;
-            margin: 10px 0;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="window-container">
-        <!-- 視窗標題列 -->
-        <div class="window-header">
-            <div class="flex items-center gap-2">
-                <span>📁 跨國銜轉學生輔導支持系統 v2.5.1 [正式環境]</span>
-            </div>
-            <div class="flex gap-2">
-                <div class="w-3 h-3 bg-white opacity-50"></div>
-                <div class="w-3 h-3 bg-white opacity-50"></div>
-                <div class="w-3 h-3 bg-white"></div>
-            </div>
-        </div>
-
-        <!-- 系統選單 -->
-        <div class="system-menu">
-            <span>個案管理(C)</span>
-            <span>行政作業(A)</span>
-            <span>教學支援(T)</span>
-            <span>統計報表(S)</span>
-            <span class="ml-auto text-gray-500 font-mono" id="sysTime"></span>
-        </div>
-
-        <div class="main-layout">
-            <!-- 側邊欄 -->
-            <aside id="sidebar" class="sidebar">
-                <div class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">SESSION INFO</div>
-                <div class="mb-6 bg-gray-200 p-2 rounded">
-                    <div class="text-[10px] text-gray-500 mb-1">AUTH_USER</div>
-                    <div class="font-bold text-blue-900 text-sm truncate" id="currentPersonaDisplay">GUEST</div>
-                </div>
-                <div>
-                    <div class="text-[10px] text-gray-500 mb-1">SYTEM_LOAD_PROGRESS</div>
-                    <div class="system-progress-container">
-                        <div id="systemProgressBar"></div>
-                        <span class="progress-text" id="progressPercent">0%</span>
-                    </div>
-                </div>
-                <div class="mt-8 space-y-2">
-                    <div class="text-[10px] font-bold text-gray-400">系統註解</div>
-                    <div class="text-[10px] leading-tight text-gray-600 bg-white p-2 border border-gray-200">
-                        註2：華語教師需具「教育部對外華語教學能力證書」。<br><br>
-                        註3：教支老師指受訓合格之新住民語文教學人員。
-                    </div>
-                </div>
-                <div class="mt-10 pt-4 border-t border-gray-200">
-                    <button onclick="resetStory()" class="text-[10px] text-red-600 font-bold hover:underline">登出系統 (LOGOUT)</button>
-                </div>
-            </aside>
-
-            <!-- 內容區 -->
-            <main class="content-area" id="contentArea">
-                
-                <!-- 登入選擇 (Persona Selection) -->
-                <div id="personaSection" class="max-w-xl mx-auto py-10">
-                    <div class="bg-gray-100 border-2 border-gray-300 p-8 shadow-inner">
-                        <h1 class="text-2xl font-black mb-6 text-center text-gray-800">黑板上看不懂的文字：個案資料庫</h1>
-                        <p class="text-sm text-center mb-8 text-gray-600 italic">「最困難的問題，是沒辦法表達出自己的問題。」</p>
-                        
-                        <div class="grid grid-cols-1 gap-3">
-                            <button onclick="selectPersona('student')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50">
-                                <span class="text-2xl">🎒</span>
-                                <div>
-                                    <div class="font-bold">跨國銜轉生</div>
-                                    <div class="text-[10px] text-gray-400">ACCESS_ID: STU-2024</div>
-                                </div>
-                            </button>
-                            <button onclick="selectPersona('teacher')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50">
-                                <span class="text-2xl">🧑‍🏫</span>
-                                <div>
-                                    <div class="font-bold">一般正式老師</div>
-                                    <div class="text-[10px] text-gray-400">ACCESS_ID: TEA-REG</div>
-                                </div>
-                            </button>
-                            <button onclick="selectPersona('admin')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50">
-                                <span class="text-2xl">🏛️</span>
-                                <div>
-                                    <div class="font-bold">政府行政單位</div>
-                                    <div class="text-[10px] text-gray-400">ACCESS_ID: GOV-ADM</div>
-                                </div>
-                            </button>
-                            <button onclick="selectPersona('supporter')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50">
-                                <span class="text-2xl">🗣️</span>
-                                <div>
-                                    <div class="font-bold">新語教支老師</div>
-                                    <div class="text-[10px] text-gray-400">ACCESS_ID: SUP-LAN</div>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 檔案內容 (Article Content) -->
-                <div id="articleContent" class="max-w-2xl mx-auto">
-                    <!-- 章節 1 -->
-                    <section id="chapter1" class="locked-section mb-12">
-                        <div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_01: 現況與入學機制</div>
-                        <h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">跨越國界的學習斷層</h2>
-                        <p class="mb-4">「塑膠字卡正面寫著中文『西瓜』，背面則標示注音與圖片。」來自越南的達達（化名）回憶，11歲返臺降級就讀時，光注音就學了三個月。他在母國生活多年，迎面而來的卻是全然陌生的環境。</p>
-                        <p class="mb-4 text-gray-700 bg-gray-50 p-4 border-l-4 border-gray-400">曾在越南完成小學教育、返臺後從五年級重新銜接的<strong>王宜靜</strong>回憶，當時幾乎沒有中文能力。她聽不懂老師上課，看不懂考卷內容，第一份中文考卷掛零，老師又難以單獨為她調整授課方式，「我就只能一個人消化，」她說。</p>
-                        <p class="mb-6">同樣來自越南的<strong>達達</strong>則認為：「最困難的問題是沒辦法表達出自己的問題。」在課堂上，他只能發呆，或在筆記本上畫畫。由於沒人真正理解他的處境，他只能告訴自己：「算了。」</p>
-                        
-                        <div class="note-box">
-                            <div class="font-bold text-xs mb-2">行政摘要：台北市入學SOP</div>
-                            <p class="text-[12px] leading-relaxed">學校須召開「習得會議」，由跨處室人員與家長討論個別方案。112學年度共439名學生申請「華語文學習扶助課程」。</p>
-                        </div>
-
-                        <!-- 互動 1 -->
-                        <div id="quizSection" class="bg-gray-100 p-6 border-2 border-gray-300 my-8 shadow-inner">
-                            <div class="text-[10px] font-mono text-blue-800 mb-2">[SYSTEM_DATA_CHECK]</div>
-                            <h3 class="font-bold mb-4 text-sm">根據統計，112學年度申請華語扶助課程的跨轉生人數為？</h3>
-                            <div id="quizContent" class="grid gap-2">
-                                <button onclick="submitQuiz(439)" class="sys-button bg-white p-3 text-xs text-left">A. 439 名</button>
-                                <button onclick="submitQuiz(150)" class="sys-button bg-white p-3 text-xs text-left">B. 150 名</button>
-                            </div>
-                            <div id="quizResult" class="hidden mt-4 p-4 bg-blue-50 border-l-4 border-blue-600">
-                                <p id="quizFeedbackText" class="text-xs"></p>
-                                <button onclick="unlockNext('chapter2')" class="mt-4 sys-button bg-black text-white px-4 py-2 text-[10px]">載入個案深度紀錄 (CH_02)</button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- 章節 2 -->
-                    <section id="chapter2" class="locked-section mb-12">
-                        <div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_02: 支援體系與師資缺口</div>
-                        <h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">支援從哪來？非正式教學的隱憂</h2>
-                        <p class="mb-4">制度上期待師資具備「對外華語教學能力證書」，但第一線情況往往不然。王宜靜最早的老師是<strong>替代役男</strong>，利用早自習教她發音；役期結束後便無人接手。達達則是由<strong>志工、大學生</strong>輪流抽離原班教學。支援由誰承接、能維持多久，始終缺乏穩定安排。</p>
-                        <p class="mb-4">濱江國小校長吳勝學坦言，學校並無專門編制教師，師資多屬「外加、彈性」人力，常只能找志工媽媽或退休老師填補。專案教師李璿瑞直言：「寫計畫不難，但前置作業（找人）會卡住。」</p>
-
-                        <!-- 互動 2 -->
-                        <div id="simSection" class="bg-gray-900 text-green-400 p-6 font-mono my-8 text-sm leading-relaxed">
-                            <div class="mb-4">>> 啟動環境壓力模擬 [達達視角]...</div>
-                            <p class="mb-6">你坐在教室，黑板上的公式像天書。你想問老師什麼是「分母」，但你不知道這個詞怎麼說。</p>
-                            <div id="simContent" class="space-y-4">
-                                <button onclick="playSim(1)" class="w-full border border-green-400 p-3 hover:bg-green-400 hover:text-black transition">選項 A: 努力比手畫腳嘗試溝通</button>
-                                <button onclick="playSim(2)" class="w-full border border-green-400 p-3 hover:bg-green-400 hover:text-black transition">選項 B: 在課本畫畫並對自己說「算了」</button>
-                            </div>
-                            <div id="simFeedback" class="hidden">
-                                <p id="simResultText" class="mb-4 text-white text-xs"></p>
-                                <div class="border-t border-green-900 pt-4 mb-6">
-                                    <span class="text-[10px] text-green-700">LOG_COMMENTARY:</span>
-                                    <p id="simPersonaText" class="text-xs italic"></p>
-                                </div>
-                                <button onclick="unlockNext('chapter3')" class="w-full bg-green-400 text-black py-2 font-bold text-xs">同步教學困境數據 (CH_03)</button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- 章節 3 -->
-                    <section id="chapter3" class="locked-section mb-12">
-                        <div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_03: 教學現場困境</div>
-                        <h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">專業門檻與權益失衡</h2>
-                        <p class="mb-4"><strong>【師資專業性低】</strong>：精進專員鄭雅文指出，華語教學難度高，「你會注音但不一定知道怎麼教發音」。教支老師黃怡貞坦言，雖有熱忱，但指導學生寫字仍感困難。</p>
-                        <p class="mb-4"><strong>【保障不足】</strong>：教支老師孫雅雯表示，他們常身兼「橋樑」與「陪伴者」。然而報酬按鐘點給付且需奔走各校，聘用不穩。曾有正式教師直接把課本一塞，要教支老師全權接手。</p>
-
-                        <!-- 互動 3 -->
-                        <div id="policySection" class="bg-gray-50 border-2 border-dashed border-blue-400 p-6 my-8">
-                            <h3 class="font-bold mb-4 text-sm text-blue-900">檢視各界提出的可能解方 (Solution Assessment)</h3>
-                            <div id="policyContent" class="space-y-3">
-                                <button onclick="playPolicy('reform')" class="w-full sys-button bg-white p-4 text-left">
-                                    <div class="font-bold text-xs">解方一：專業化培訓</div>
-                                    <p class="text-[10px] text-gray-500">將退休教師再經培訓，填補華語教學缺口。</p>
-                                </button>
-                                <button onclick="playPolicy('pragmatic')" class="w-full sys-button bg-white p-4 text-left">
-                                    <div class="font-bold text-xs">解方二：志工輔導</div>
-                                    <p class="text-[10px] text-gray-500">引入大學生志工提供非制式教學與情感陪伴。</p>
-                                </button>
-                            </div>
-                            <div id="policyFeedback" class="hidden">
-                                <div class="p-3 bg-white border text-xs leading-relaxed mb-4" id="policyRealityText"></div>
-                                <div class="p-3 bg-rose-50 border-l-4 border-rose-400 text-xs italic mb-6" id="policyPersonaText"></div>
-                                <button onclick="unlockNext('chapter4')" class="w-full bg-blue-900 text-white py-3 font-bold text-xs shadow-lg">產出最終展望報告 (CH_04)</button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- 章節 4 -->
-                    <section id="chapter4" class="locked-section mb-12">
-                        <div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_04: 未來展望</div>
-                        <h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">擴大保障，減少漏洞</h2>
-                        <p class="mb-4">除了解決師資問題，營隊活動（如小小外交官）也被視為創造互動交流的良方。然而，最重要的仍是<strong>政策涵蓋面</strong>。</p>
-                        <p class="mb-8">目前政策仍未納入「父母皆為臺籍」的跨轉生。鄭雅文強調，在全球化下，臺籍人士海外子女返台定居，其華語銜接需求同樣急迫。唯有全面開放，才能真正減少銜轉教育的制度漏洞。</p>
-                        
-                        <!-- 結尾 (Final Ending) -->
-                        <div id="finalEnding" class="bg-blue-900 text-white p-10 text-center shadow-2xl">
-                            <div class="text-[10px] font-mono text-blue-300 mb-4 tracking-tighter">>>> FINAL_ANALYSIS_COMPLETE <<<</div>
-                            <h2 id="endingTitle" class="text-2xl font-bold mb-6"></h2>
-                            <p id="endingText" class="text-sm text-blue-100 mb-8 leading-relaxed"></p>
-                            <p id="ctaText" class="font-bold text-amber-400 text-lg mb-8"></p>
-                            
-                            <div class="flex gap-4">
-                                <button onclick="window.print()" class="flex-1 bg-white text-blue-900 py-3 text-xs font-bold sys-button">列印檔案紀錄</button>
-                                <button onclick="resetStory()" class="flex-1 border border-white text-white py-3 text-xs font-bold sys-button hover:bg-white hover:text-blue-900 transition-colors">切換權限檢視</button>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <script>
-        let state = { persona: '', progress: 0 };
-        const personaData = {
-            student: "跨國銜轉生 (STU-2024)",
-            teacher: "一般正式老師 (TEA-REG)",
-            admin: "政府行政單位 (GOV-ADM)",
-            supporter: "新語教支老師 (SUP-LAN)"
-        };
-
-        function updateProgress(val) {
-            state.progress = val;
-            const bar = document.getElementById('systemProgressBar');
-            const text = document.getElementById('progressPercent');
-            if (bar) bar.style.width = val + '%';
-            if (text) text.innerText = val + '%';
-        }
-
-        function selectPersona(id) {
-            state.persona = id;
-            document.getElementById('personaSection').style.display = 'none';
-            document.getElementById('sidebar').style.display = 'block';
-            document.getElementById('currentPersonaDisplay').innerText = personaData[id];
-            
-            // 初始解鎖第一章
-            unlockNext('chapter1');
-            updateProgress(25);
-        }
-
-        function submitQuiz(ans) {
-            const feedback = document.getElementById('quizFeedbackText');
-            feedback.innerHTML = ans === 439 
-                ? "<strong>驗證通過。</strong> 112學年度共439名學生申請課程，顯示需求龐大。" 
-                : "<strong>數據不匹配。</strong> 正確為439名，這反映了第一線行政系統處理的案量負荷。";
-            document.getElementById('quizContent').classList.add('hidden');
-            document.getElementById('quizResult').classList.remove('hidden');
-        }
-
-        function playSim(choice) {
-            const resText = document.getElementById('simResultText');
-            const perText = document.getElementById('simPersonaText');
-            resText.innerText = choice === 1 
-                ? "> 結果：你嘗試突破，但破碎的語言無法傳遞核心困難。系統判定：溝通效率低下。" 
-                : "> 結果：你進入『慢性失蹤』狀態。班導師忙於其他學生，並未察覺異常。";
-            
-            const comments = {
-                student: "這就是達達說的：『最困難的是沒辦法表達自己的問題』，最後只能算了。",
-                teacher: "你看見了他的畫，卻沒時間解讀他的話。這正是專業師資缺乏時的教學死角。",
-                admin: "數據上看來學生在位，實務上卻在發生無形的學習中輟。",
-                supporter: "如果你能坐在他旁邊，這一切就不會只是畫畫，而是開始學注音符號。"
-            };
-            perText.innerText = comments[state.persona];
-            document.getElementById('simContent').classList.add('hidden');
-            document.getElementById('simFeedback').classList.remove('hidden');
-        }
-
-        function playPolicy(type) {
-            const resText = document.getElementById('policyRealityText');
-            const perText = document.getElementById('policyPersonaText');
-            
-            if (type === 'reform') {
-                resText.innerText = "專家分析：退休教師具備經驗，若能補足華語專業，是現階段最適合填補缺口的人選。";
-            } else {
-                resText.innerText = "志工分享：志工能提供彈性的輔導，讓學生獲得『七分熟』的陪伴與非制式教學。";
-            }
-
-            const comments = {
-                student: "無論是專業老師還是大學生哥哥，你最需要的是一個能穩定待在你身邊的人。",
-                teacher: "退休老師的加入能減輕課程壓力，但行政核銷的繁瑣依然需要解決。",
-                admin: "政策制定應思考如何結合退休人力的專業與志工的彈性。",
-                supporter: "教支老師雖具母語優勢，但若無專業華語能力，確實容易降低學生的學習速度。"
-            };
-            perText.innerText = comments[state.persona];
-            document.getElementById('policyContent').classList.add('hidden');
-            document.getElementById('policyFeedback').classList.remove('hidden');
-            generateFinalEnding();
-        }
-
-        function unlockNext(id) {
-            const section = document.getElementById(id);
-            if (!section) return;
-            section.classList.remove('locked-section');
-            section.classList.add('unlocked-section');
-            
-            // 計算進度
-            if (id === 'chapter2') updateProgress(50);
-            if (id === 'chapter3') updateProgress(75);
-            if (id === 'chapter4') updateProgress(100);
-            
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function generateFinalEnding() {
-            const title = document.getElementById('endingTitle');
-            const text = document.getElementById('endingText');
-            const cta = document.getElementById('ctaText');
-            title.innerText = `權限總結：${personaData[state.persona]}`;
-            text.innerText = "在黑板上那些看不懂的文字背後，是一個個跨國銜轉生的困境。每一個環節的改變，都能讓這些孩子不再只能對自己說『算了』。";
-            const ctas = {
-                student: "讓更多人知道，語言的高牆需要大家一起拆除。 →",
-                teacher: "正視差異，為銜轉生爭取更穩定的專業支持。 →",
-                admin: "打破行政僵化，讓資源在學期開始時就能就位。 →",
-                supporter: "倡議教支老師專業定位，保障應有的工作權益。 →"
-            };
-            cta.innerText = ctas[state.persona];
-        }
-
-        // 核心修正：重設系統狀態
-        function resetStory() {
-            state = { persona: '', progress: 0 };
-            
-            // 隱藏內容，恢復選擇介面
-            document.getElementById('personaSection').style.display = 'block';
-            document.getElementById('sidebar').style.display = 'none';
-            
-            // 重設所有章節為鎖定並隱藏
-            const chapters = ['chapter1', 'chapter2', 'chapter3', 'chapter4'];
-            chapters.forEach(id => {
-                const sec = document.getElementById(id);
-                sec.classList.remove('unlocked-section');
-                sec.classList.add('locked-section');
-            });
-
-            // 重設互動元件
-            document.getElementById('quizContent').classList.remove('hidden');
-            document.getElementById('quizResult').classList.add('hidden');
-            document.getElementById('simContent').classList.remove('hidden');
-            document.getElementById('simFeedback').classList.add('hidden');
-            document.getElementById('policyContent').classList.remove('hidden');
-            document.getElementById('policyFeedback').classList.add('hidden');
-            
-            updateProgress(0);
-            
-            // 捲動回頂部
-            window.scrollTo({top: 0, behavior: 'smooth'});
-            document.getElementById('contentArea').scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('sysTime').innerText = now.toLocaleString();
-        }, 1000);
-    </script>
-</body>
-</html>
