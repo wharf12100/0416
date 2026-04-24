@@ -1,75 +1,713 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黑板上看不懂的文字：跨國銜轉教育的教學難題</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --sys-blue: #1e40af;
-            --sys-gray: #f3f4f6;
-            --sys-border: #d1d5db;
-        }
-        html, body {
-            min-height: 100%;
-        }
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #9ca3af;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100dvh;
-        }
-        .window-container {
-            width: 100%;
-            max-width: 1000px;
-            background: white;
-            border: 2px solid #1f2937;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            overflow: visible;
-            position: relative;
-        }
-        .top-chrome {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-        }
-        .window-header {
-            background: var(--sys-blue);
-            color: white;
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .system-menu {
-            background: #e5e7eb;
-            border-bottom: 1px solid var(--sys-border);
-            padding: 4px 12px;
-            font-size: 12px;
-            display: flex;
-            gap: 15px;
-            color: #374151;
-        }
-        .system-menu span {
-            cursor: pointer;
-            padding: 2px 6px;
-        }
-        .system-menu span:hover {
-            background: #d1d5db;
-        }
-        .main-layout {
-            display: flex;
-            flex: 1;
-            background: white;
-            min-height: 0;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>黑板上看不懂的文字：跨國銜轉教育的教學難題</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a2e0e6ad65.js" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--blue:#1e40af;--border:#1f2937;--bg:#f3f4f6}
+    *{box-sizing:border-box}
+    body{margin:0;padding:20px;background:#9ca3af;font-family:'Noto Sans TC',sans-serif;display:flex;justify-content:center}
+    .window{width:100%;max-width:1000px;background:#fff;border:2px solid var(--border);box-shadow:10px 10px 0 rgba(0,0,0,.2)}
+    .top{position:sticky;top:0;z-index:20}
+    .header{background:var(--blue);color:#fff;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
+    .menu{background:#e5e7eb;border-bottom:1px solid #d1d5db;padding:4px 12px;font-size:12px;display:flex;gap:14px;color:#374151}
+    .menu span{padding:2px 6px;cursor:pointer}
+    .layout{display:flex;align-items:flex-start}
+    .sidebar{width:220px;background:#f9fafb;border-right:1px solid #d1d5db;padding:20px 15px;display:none;position:sticky;top:74px;max-height:calc(100dvh - 94px);overflow:auto}
+    .content{flex:1;padding:30px 40px;background-image:radial-gradient(#e5e7eb 1px,transparent 1px);background-size:20px 20px}
+    .sys-button{border:2px solid var(--border);box-shadow:3px 5px 0 var(--border),6px 10px 18px rgba(15,23,42,.16);transition:.12s transform,.12s box-shadow,.12s filter}
+    .sys-button:hover{transform:translate(-1px,-1px);box-shadow:4px 6px 0 var(--border),8px 12px 20px rgba(15,23,42,.18);filter:brightness(1.03)}
+    .sys-button:active{transform:translate(2px,3px);box-shadow:1px 2px 0 var(--border),2px 4px 8px rgba(15,23,42,.16)}
+    .locked{display:none;opacity:0}.unlocked{display:block;opacity:1;animation:fade .5s ease-out}.hidden{display:none !important}
+    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .progress{width:100%;height:18px;background:#cbd5e1;border:1px solid #64748b;position:relative}.bar{height:100%;width:0;background:#22c55e;transition:width .35s ease}.pct{position:absolute;right:5px;top:0;line-height:18px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:700}
+
+    .landing{margin:0 auto;padding:40px 0;position:relative;min-height:860px}
+    .landing-box{max-width:36rem;margin:0 auto;background:#f3f4f6;border:2px solid #d1d5db;padding:2rem;box-shadow:inset 0 0 0 1px rgba(255,255,255,.75);position:relative;z-index:1}
+    .hello-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+    .hello{position:absolute;font-weight:800;opacity:.2;animation:breath 4.6s ease-in-out infinite;transform:translate(-50%,-50%)}
+    @keyframes breath{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.08)}}
+    .is-blue{color:#1d4ed8}.is-indigo{color:#4338ca}.is-slate{color:#334155}.is-amber{color:#b45309}.is-violet{color:#6d28d9}
+
+    .inline-term{position:relative;display:inline-flex;align-items:center}
+    .inline-trigger{display:inline-flex;align-items:center;gap:4px;margin:0 2px;padding:2px 8px;border:1.5px solid var(--border);border-radius:9999px;background:#eff6ff;color:#1e3a8a;font-weight:700;line-height:1.4;box-shadow:2px 3px 0 rgba(31,41,55,.18);cursor:help}
+    .inline-trigger svg{width:13px;height:13px}
+    .tip{position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%) translateY(4px);width:320px;max-width:min(320px,calc(100vw - 48px));padding:10px 12px;border:2px solid var(--border);border-radius:12px;background:#fff;font-size:12px;line-height:1.55;box-shadow:6px 8px 18px rgba(15,23,42,.18);opacity:0;visibility:hidden;pointer-events:none;transition:.18s opacity,.18s transform,.18s visibility;z-index:30}
+    .tip:before{content:'';position:absolute;top:-8px;left:50%;width:14px;height:14px;background:#fff;border-left:2px solid var(--border);border-top:2px solid var(--border);transform:translateX(-50%) rotate(45deg)}
+    .inline-term:hover .tip,.inline-term:focus-within .tip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+
+    .chart-card{background:#fff;border:2px solid #d1d5db;box-shadow:4px 4px 0 rgba(31,41,55,.08)}
+    .pie-shell{max-width:420px;margin:0 auto}.pie{width:100%;height:auto;display:block}.slice{stroke:#1f2937;stroke-width:2;cursor:pointer;transition:transform .18s ease,filter .18s ease}.slice.active{filter:drop-shadow(0 4px 8px rgba(49,46,129,.22))}.label{font-size:10px;fill:#312e81}.labelline{stroke:#818cf8;stroke-width:1.2;fill:none}
+
+    .bb-root,.sg-root{background:#f3f4f6;border:2px solid var(--border);box-shadow:8px 8px 0 rgba(31,41,55,.12);padding:10px}
+    .bb-panel,.sg-panel{background:#f9fafb;border:2px solid var(--border);box-shadow:5px 5px 0 rgba(31,41,55,.1)}
+    .chip{display:inline-block;font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.14em;color:#1e3a8a;background:#dbeafe;border:1.5px solid #1e3a8a;padding:4px 8px}
+    .bb-cover{background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 52%,#f8fafc 100%);border:2px solid var(--border);box-shadow:4px 4px 0 rgba(31,41,55,.1);padding:12px;display:grid;grid-template-columns:180px 1fr;gap:14px;align-items:center}
+    .bb-cover-visual{background:#fff;border:2px solid var(--border);padding:8px;display:flex;align-items:center;justify-content:center;min-height:122px}
+    .bb-cover-title{font-size:1.1rem;font-weight:800;color:#0f172a;margin-bottom:.35rem}
+    .bb-cover-kicker{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.14em;color:#1e3a8a;margin-bottom:.35rem}
+    .bb-cover-desc{font-size:.85rem;line-height:1.6;color:#475569}
+    .bb-badge{display:inline-flex;align-items:center;padding:3px 8px;border:1.5px solid #1e3a8a;background:#eff6ff;color:#1e3a8a;font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;font-weight:700}
+    .bb-panel-compact{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;background:#f3f4f6}
+    .bb-panel-compact.summary{grid-template-columns:1fr}
+    .bb-panel-compact.summary #bb-interaction{max-width:680px;width:100%;margin:0 auto;min-height:220px;display:flex;align-items:center;justify-content:center}
+    .bb-progress-dot{width:10px;height:10px;border-radius:9999px;background:#94a3b8;border:1px solid var(--border)}
+    .bb-progress-dot.active{background:#eab308;box-shadow:0 0 10px rgba(234,179,8,.5)}
+    .board{background:linear-gradient(180deg,#355f2e 0%,#2d5a27 100%);border:6px solid #475569;box-shadow:inset 0 0 36px rgba(0,0,0,.38);min-height:180px;position:relative;padding:1.2rem 1rem;color:#fff;line-height:1.9;display:flex;align-items:center;justify-content:center;text-align:center}
+    .board:before{content:'';position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.05) 0%,transparent 80%)}
+    .bb-text{position:relative;z-index:1;font-size:1rem;line-height:1.8}
+    .bb-highlight{position:relative;display:inline-block;border-bottom:3px solid #fbbf24;color:#fbbf24;margin:0 6px;font-weight:700;padding-bottom:.08rem}
+    .bb-highlight:after{content:attr(data-anno);position:absolute;bottom:-2.2rem;left:50%;transform:translateX(-50%);font-size:.9rem;color:#fbbf24;white-space:nowrap;font-weight:700;line-height:1}
+    .bb-original{display:block;position:relative;padding-bottom:3.4rem;line-height:2.8}
+    .bb-detail{display:flex;flex-direction:column;align-items:center;gap:1rem;width:100%}
+    .bb-translation{font-size:.85rem;color:#a7f3d0}
+    .bb-note{font-size:.82rem;color:#e5e7eb;background:rgba(0,0,0,.34);padding:.7rem .85rem;border-radius:8px;border-left:6px solid #fbbf24;text-align:left;max-width:90%;line-height:1.5}
+    .bb-option,.sg-option{text-align:left;padding:.7rem .85rem;background:#fff;border:2px solid var(--border);box-shadow:3px 5px 0 var(--border),6px 10px 18px rgba(15,23,42,.1);transition:.12s transform,.12s box-shadow,.12s filter;width:100%;font-size:.9rem;line-height:1.45}
+    .bb-option:hover,.sg-option:hover{filter:brightness(1.02);transform:translate(-1px,-1px);box-shadow:4px 6px 0 var(--border),8px 12px 20px rgba(15,23,42,.16)}
+    .bb-option.correct{background:#065f46 !important;border-color:#10b981 !important;color:#ecfdf5 !important}
+    .bb-option.wrong{background:#7f1d1d !important;border-color:#ef4444 !important;color:#fef2f2 !important}
+
+    .sg-emergency{animation:alarm .8s infinite alternate}
+    @keyframes alarm{from{background:#f3f4f6}to{background:#fecaca}}
+    .sg-frame{min-height:500px;height:500px;overflow:hidden}.sg-scroll{flex:1;overflow-y:auto}.sg-head{background:#1e40af;color:#fff;border-bottom:2px solid var(--border);padding:1rem 1.2rem}.sg-stat{background:#f8fafc;border:2px solid var(--border);box-shadow:4px 4px 0 rgba(31,41,55,.12);padding:.7rem}
+    .sg-shake{animation:shake .4s infinite;border-color:#b91c1c !important;color:#b91c1c !important;background:#fff1f2 !important}
+    @keyframes shake{0%{transform:translate(1px,1px)}20%{transform:translate(-2px,0)}40%{transform:translate(2px,1px)}60%{transform:translate(-1px,-1px)}80%{transform:translate(1px,2px)}100%{transform:translate(0,0)}}
+
+    #modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.48);z-index:60;align-items:center;justify-content:center;padding:20px}
+    .modal-card{background:#fff;border:2px solid var(--border);box-shadow:10px 10px 0 rgba(31,41,55,.18);width:min(720px,100%)}
+    .modal-top{background:var(--blue);color:#fff;padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+    .modal-body-inner{padding:16px;color:#374151;line-height:1.7}
+
+    @media (max-width:768px){
+      body{padding:0}.window{max-width:none;border:none;box-shadow:none}.top{position:static}.layout{display:block}.sidebar{position:static;max-height:none;width:auto;border-right:none;border-bottom:1px solid #d1d5db}.content{padding:24px 20px}.bb-cover,.bb-panel-compact{grid-template-columns:1fr}.bb-cover-visual{min-height:110px}#bb-interaction{min-height:180px}.sg-frame{min-height:auto;height:auto;overflow:visible}.sg-scroll{overflow:visible}
+    }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <div class="top">
+      <div class="header"><div>📁 跨國銜轉學生輔導支持系統【記者黃律齊、林庭如、江虹、蔡得曦報導】</div><div class="flex gap-2"><div class="w-3 h-3 bg-white opacity-50"></div><div class="w-3 h-3 bg-white opacity-50"></div><div class="w-3 h-3 bg-white"></div></div></div>
+      <div class="menu"><span onclick="showModal('case')">個案管理(C)</span><span onclick="showModal('stat')">統計報表(S)</span><span onclick="showModal('teach')">教學支援(T)</span><span onclick="showModal('admin_work')">行政作業(A)</span><span class="ml-auto text-gray-500 font-mono" id="sysTime"></span></div>
+    </div>
+    <div id="modal"></div>
+    <div class="layout">
+      <aside id="sidebar" class="sidebar">
+        <div class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">SESSION INFO</div>
+        <div class="mb-6 bg-gray-200 p-2 rounded"><div class="text-[10px] text-gray-500 mb-1">AUTH_USER</div><div class="font-bold text-blue-900 text-sm truncate" id="currentPersonaDisplay">GUEST</div></div>
+        <div><div class="text-[10px] text-gray-500 mb-1">SYTEM_LOAD_PROGRESS</div><div class="progress"><div id="systemProgressBar" class="bar"></div><span id="progressPercent" class="pct">0%</span></div></div>
+        <div class="mt-10 pt-4 border-t border-gray-200"><button onclick="resetStory()" class="sys-button text-[10px] text-red-700 font-bold bg-white px-3 py-2 rounded">登出系統 (LOGOUT)</button></div>
+      </aside>
+      <main class="content">
+        <div id="personaSection" class="landing">
+          <div id="landingHelloLayer" class="hello-layer"></div>
+          <div class="landing-box">
+            <h1 class="text-2xl font-black mb-6 text-center text-gray-800">黑板上看不懂的文字：<br>跨國銜轉教育的教學難題</h1>
+            <p class="text-sm text-center mb-8 text-gray-600 italic">「最困難的問題，是沒辦法表達出自己的問題。」</p>
+            <div class="grid grid-cols-1 gap-3">
+              <button onclick="selectPersona('student')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50"><span class="text-2xl">🎒</span><div><div class="font-bold">跨國銜轉生</div><div class="text-[10px] text-gray-400">ACCESS_ID: STU-2024</div></div></button>
+              <button onclick="selectPersona('teacher')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50"><span class="text-2xl">🧑‍🏫</span><div><div class="font-bold">一般正式老師</div><div class="text-[10px] text-gray-400">ACCESS_ID: TEA-REG</div></div></button>
+              <button onclick="selectPersona('admin')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50"><span class="text-2xl">🏛️</span><div><div class="font-bold">政府行政單位</div><div class="text-[10px] text-gray-400">ACCESS_ID: GOV-ADM</div></div></button>
+              <button onclick="selectPersona('supporter')" class="sys-button bg-white p-4 text-left flex items-center gap-4 hover:bg-blue-50"><span class="text-2xl">🗣️</span><div><div class="font-bold">新住民語教學支援老師</div><div class="text-[10px] text-gray-400">ACCESS_ID: SUP-LAN</div></div></button>
+            </div>
+          </div>
+        </div>
+
+        <div id="articleContent" class="max-w-2xl mx-auto">
+          <section id="chapter1" class="locked mb-12">
+            <div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_01: 現況與入學機制</div>
+            <h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">跨越國界的學習斷層</h2>
+            <p class="mb-4">「塑膠字卡正面寫著中文『西瓜』，背面則標示注音與圖片。」來自越南的達達（化名）回憶，11歲返臺降級就讀時，光注音就學了三個月。他在母國生活多年，迎面而來的卻是全然陌生的環境。</p>
+            <p class="mb-6">根據教育部統計，113學年度高中以下新住民在學子女共26.5萬人，佔全體學生6.7%。而在新二代學生中，有一群人的處境更複雜──他們被稱為<span class="inline-term"><button type="button" class="inline-trigger" aria-label="跨國銜轉學生名詞說明"><span>「跨國銜轉學生」</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button><span class="tip">「跨國銜轉」指新住民子女曾在海外生活後返臺就學，因華語不足致學習與適應困難。其家庭多為雙外籍或臺外配組成，幼年被送回母國由親屬照料，後因居留屆滿等因素返臺。</span></span>（以下簡稱跨轉生）。</p>
+            <div id="countryQuizSection" class="bg-yellow-50 p-6 border-2 border-yellow-300 my-8 shadow-inner">
+              <div class="text-[10px] font-mono text-amber-800 mb-2">[SYSTEM_DATA_CHECK_01]</div>
+              <h3 class="font-bold mb-4 text-sm">跨轉生來自哪個國家最多？</h3>
+              <div id="countryQuizContent" class="grid gap-2 transition-colors duration-300">
+                <button onclick="submitCountryQuiz(false,this)" class="sys-button bg-white p-3 text-xs text-left country-option">A. 菲律賓</button>
+                <button onclick="submitCountryQuiz(false,this)" class="sys-button bg-white p-3 text-xs text-left country-option">B. 美國</button>
+                <button onclick="submitCountryQuiz(false,this)" class="sys-button bg-white p-3 text-xs text-left country-option">C. 印尼</button>
+                <button onclick="submitCountryQuiz(true,this)" class="sys-button bg-white p-3 text-xs text-left country-option correct-country-option">D. 越南</button>
+              </div>
+              <div id="countryQuizResult" class="hidden mt-4 p-4 bg-white border-l-4 border-amber-500">
+                <p id="countryQuizFeedbackText" class="text-xs"></p>
+                <div id="countryCharts" class="hidden mt-5">
+                  <div class="chart-card p-4">
+                    <div class="font-bold text-sm text-gray-800 text-center mb-1">跨轉生來臺前居住國</div>
+                    <div id="beforeCountryChart" class="pie-shell"></div>
+                    <div class="mt-3 text-[10px] leading-relaxed text-gray-500 text-right">圖表製作／ 黃律齊　資料來源／ 教育部國民及學前教育署新住民子女教育網</div>
+                  </div>
+                </div>
+                <button onclick="showPersonaQuiz()" class="mt-4 sys-button bg-white text-black px-4 py-2 text-[10px]">繼續閱讀個案處境</button>
+              </div>
+            </div>
+            <div id="chapter1Narrative" class="hidden">
+              <p class="mb-6">達達表示：「最困難的問題是沒辦法表達出自己的問題。」在課堂上，他只能發呆，或在筆記本上畫畫。由於沒人真正理解他的處境，他只能告訴自己：「算了。」曾在越南完成小學教育、返臺後從五年級重新銜接的王宜靜則回憶，當時幾乎沒有中文能力。她聽不懂老師上課，看不懂考卷內容，第一份中文考卷掛零，老師又難以單獨為她調整授課方式，「我就只能一個人消化，」她說。</p>
+              <div class="bb-root my-8">
+                <div class="flex items-center justify-between mb-2 gap-3 flex-wrap"><div class="chip">LANGUAGE EXPERIENCE MODULE / FILE_01-A</div><div class="text-[10px] font-mono tracking-[0.14em] text-blue-900 bg-white border border-blue-900 px-3 py-1">BLACKBOARD DECODER / LIVE</div></div>
+                <div id="bb-start" class="bb-panel p-4 md:p-5 mb-3 text-center">
+                  <div class="bb-cover">
+                    <div class="bb-cover-visual"><svg viewBox="0 0 220 130" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="12" width="200" height="106" fill="#355f2e" stroke="#475569" stroke-width="6"/><rect x="26" y="28" width="168" height="74" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="2"/><path d="M40 48c16-10 28-12 44-3 11 6 17 7 28 0 15-10 26-10 42 1" fill="none" stroke="#f8fafc" stroke-width="3" stroke-linecap="round" opacity="0.8"/><path d="M48 72h64" stroke="#fbbf24" stroke-width="5" stroke-linecap="round"/><path d="M124 72h42" stroke="#f8fafc" stroke-width="5" stroke-linecap="round" opacity="0.85"/><circle cx="164" cy="48" r="12" fill="none" stroke="#f8fafc" stroke-width="3" opacity="0.9"/><path d="M172 56l14 14" stroke="#f8fafc" stroke-width="4" stroke-linecap="round" opacity="0.9"/></svg></div>
+                    <div class="text-left"><div class="bb-cover-kicker">IMMERSIVE INTRO</div><div class="bb-cover-title">黑板上的天書</div><div class="bb-cover-desc mb-4">當黑板上的每個字你都看得見，卻依然無法理解意思，課堂就像一場沒有鑰匙的解碼任務。</div><button onclick="bbStartGame()" class="sys-button bg-blue-900 text-white px-8 py-3 font-bold text-sm tracking-wide">點擊進入遊戲</button></div>
+                  </div>
+                </div>
+                <div id="bb-shell" class="hidden">
+                  <div class="flex justify-center space-x-3 mb-3 bg-white border border-gray-300 py-2" id="bbProgress"><div class="bb-progress-dot" id="bb-dot-0"></div><div class="bb-progress-dot" id="bb-dot-1"></div><div class="bb-progress-dot" id="bb-dot-2"></div><div class="bb-progress-dot" id="bb-dot-3"></div></div>
+                  <div id="bbCompact" class="bb-panel bb-panel-compact p-3 md:p-4">
+                    <div id="bbBoard" class="board"><div id="bbText" class="bb-text">正在載入課程...</div></div>
+                    <div id="bb-interaction">
+                      <div id="bbQuiz"><div class="flex items-center justify-between border-b border-gray-300 pb-3 mb-5"><p id="bbMeta" class="font-bold text-blue-900 text-sm">語言解碼</p></div><div class="space-y-4"><p class="text-gray-500 text-[12px] font-mono tracking-wide">請推測黑板上這段文字的意思：</p><div id="bbOptions" class="grid grid-cols-1 gap-3"></div></div></div>
+                      <div id="bbControls" class="hidden space-y-6 mt-6"><button onclick="bbNext()" class="w-full sys-button bg-blue-900 text-white py-3 font-bold text-sm tracking-wide">進入下一堂課</button></div>
+                      <div id="bbSummary" class="hidden text-center py-8"><h3 class="text-2xl font-bold text-blue-900 mb-4">體驗完成</h3><p class="text-gray-700 mb-8 leading-relaxed">即便看得到每一個字母，若缺乏語言的鑰匙，知識依然緊鎖。<br>老師的雙語標記與翻譯，是銜轉生突破學習困境的起點。</p><button onclick="bbRestart()" class="sys-button bg-white text-slate-900 px-8 py-3 font-bold text-sm tracking-wide">再玩一次</button></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="quizSection" class="bg-gray-100 p-6 border-2 border-gray-300 my-8 shadow-inner hidden"><div class="text-[10px] font-mono text-blue-800 mb-2">[SYSTEM_DATA_CHECK_02]</div><h3 id="quizQuestion" class="font-bold mb-4 text-sm"></h3><div id="quizContent" class="grid gap-2"></div><div id="quizResult" class="hidden mt-4 p-4 bg-blue-50 border-l-4 border-blue-600"><p id="quizFeedbackText" class="text-xs"></p><button onclick="unlockNext('chapter2')" class="mt-4 sys-button bg-white text-black px-4 py-2 text-[10px]">載入個案深度紀錄 (CH_02)</button></div></div>
+            </div>
+          </section>
+
+          <section id="chapter2" class="locked mb-12">
+            <div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_02: 支援體系與師資缺口</div><h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">支援從哪來？非正式教學的隱憂</h2>
+            <p class="mb-4">制度上期待師資具備<span class="inline-term"><button type="button" class="inline-trigger"><span>「對外華語教學能力證書」</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button><span class="tip">通過此檢定者，本報導統稱「華語教師」，即具有華語文教學專業者。然實務上無需具備此證照亦可指導跨轉生華語。</span></span>，但第一線情況往往不然。王宜靜最早的老師是替代役男，利用早自習教她發音；役期結束後便無人接手。達達則是由志工、大學生輪流抽離原班教學。支援由誰承接、能維持多久，始終缺乏穩定安排。濱江國小校長吳勝學坦言，校內無專責編制，師資多仰賴志工或退休教師補位。此外，亦有部分學校延請校內既有的<span class="inline-term"><button type="button" class="inline-trigger"><span>「新住民語文教學支援人員」</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button><span class="tip">108學年度起，新住民語文納入語文領域，國小須於本土語或新住民語中擇一修習，國中與高中則列為選修。政府為因應教學需求，培訓具專長的教學支援人員，合格後以兼任方式授課，專長於新住民語文者稱為「新住民語文教學支援人員」。</span></span>（以下簡稱教支老師）指導跨轉生華語。</p>
+            <div id="simSection" class="bg-gray-900 text-green-400 p-6 font-mono my-8 text-sm leading-relaxed"><div class="mb-4">>> 啟動環境壓力模擬 ...</div><p id="simQuestionText" class="mb-6"></p><div id="simContent" class="space-y-4"></div><div id="simFeedback" class="hidden"><p id="simResultText" class="mb-4 text-white text-xs"></p><div class="border-t border-green-900 pt-4 mb-6"><span class="text-[10px] text-green-700">LOG_COMMENTARY:</span><p id="simPersonaText" class="text-xs italic"></p></div><button onclick="scrollToChapter2Quiz()" class="w-full bg-white text-black py-2 font-bold text-xs sys-button">繼續閱讀華語教學專業缺口</button></div></div>
+            <div class="space-y-4 mb-8"><p><span class="inline-term"><button type="button" class="inline-trigger"><span>跨國銜轉學生教育支持與服務精進</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button><span class="tip">全稱為「跨國銜轉學生教育支持與服務精進計畫」，由教育部國民及學前教育署聯合國立高雄師範大學於2017年合作建構，旨在推動跨轉生相關政策及「跨轉生線上教育支持與服務系統」的建置。</span></span>專員鄭雅文指出，華語教學具高度專業，「你會注音符號，你英文也很好，但是你還真的不知道要怎麼教學生準確發出『ㄆ』的音。」然而，通過<span class="inline-term"><button type="button" class="inline-trigger"><span>「華語文能力測驗」</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button><span class="tip">由教育部委託臺灣師範大學承辦，針對母語非華語者設計，供欲了解自身程度或在華語環境求學、工作者參加，評量包括聽力、閱讀、口語與寫作能力等項目。</span></span>中級，其字彙量介於2500至5000之間，「這樣就比較具有華語教學的能力。」</p><p>教支老師黃怡貞是其中一例。他平時在學校教授泰語，後來接觸跨轉生華語教學的領域，卻連指導學生寫字都覺得困難。此外，也有部分跨轉生曾因教支老師的發音不夠標準，而不信任其華語輔導能力，這也凸顯跨轉生教育對華語專業人才的迫切需求。</p><p>其實，華語教師的必要條件不在需要會跨轉生的母語，而在應具有華語教學的專業背景。鄭雅文表示，教支老師雖熟悉跨轉生的母語，雙方卻因此容易直接使用母語溝通，且未必具有華語能力及教學專業，反而可能降低學生的華語學習速度。</p></div>
+            <div id="chapter2QuizSection" class="bg-gray-100 p-6 border-2 border-gray-300 my-8 shadow-inner"><div class="text-[10px] font-mono text-blue-800 mb-2">[SYSTEM_DATA_CHECK_03]</div><h3 class="font-bold mb-4 text-sm">依照前文，跨轉生華語輔導最核心的條件是什麼？</h3><div id="chapter2QuizContent" class="grid gap-2"><button onclick="submitChapter2Quiz(false,this)" class="sys-button bg-white p-3 text-xs text-left chapter2-option">A. 只要會跨轉生的母語即可</button><button onclick="submitChapter2Quiz(true,this)" class="sys-button bg-white p-3 text-xs text-left chapter2-option correct-chapter2-option">B. 具備華語教學的專業背景</button><button onclick="submitChapter2Quiz(false,this)" class="sys-button bg-white p-3 text-xs text-left chapter2-option">C. 願意陪伴學生就足夠，不需證照</button><button onclick="submitChapter2Quiz(false,this)" class="sys-button bg-white p-3 text-xs text-left chapter2-option">D. 由正式導師兼任即可解決問題</button></div><div id="chapter2QuizResult" class="hidden mt-4 p-4 bg-blue-50 border-l-4 border-blue-600"><p id="chapter2QuizFeedbackText" class="text-xs"></p><button onclick="unlockNext('chapter3')" class="mt-4 sys-button bg-white text-black px-4 py-2 text-[10px]">同步教學困境數據 (CH_03)</button></div></div>
+          </section>
+
+          <section id="chapter3" class="locked mb-12">
+            <div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_03: 教學現場困境</div><h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">專業門檻與權益失衡</h2>
+            <p class="mb-4">對非華語專業出身的教支老師而言，華語教學並非本業，但基於照顧同鄉、心疼孩子，仍選擇承擔；然而政府未提供相應保障，形成工作負荷與待遇失衡。他們常扮演「橋樑」，協助學生與師長溝通並提供陪伴。柬埔寨語教支老師孫雅雯指出：「他不知道怎麼跟班導師溝通，我就會幫忙。」</p>
+            <p class="mb-4">然而，其授課多以鐘點計酬，缺乏正式教師的穩定薪資，且需奔波多校、聘用不穩。前立法委員林麗蟬提到，曾有教支老師反映，正式教師「把課本一塞」，便教支老師全權接手跨轉生的所有進度。整體反映制度未完善，也忽視其勞動權益。孫雅雯直言：「但沒有得到相對回報，每個人都會受不了」，並感嘆「不是因為稀少而珍貴，是稀少而不受重視」。</p>
+            <div id="sgBlock" class="sg-root my-8">
+              <div id="sgStart" class="sg-panel sg-frame p-8 md:p-10 text-center border-b-8 border-slate-900"><div class="chip">SIMULATION MODULE / FILE_03-A</div><h3 class="text-3xl font-black mb-3 text-slate-900">黑板上的迷霧</h3><p class="text-sm text-blue-900 font-bold mb-8 tracking-[0.2em] uppercase">Hardcore Survival Mode</p><div class="bg-white p-5 border-2 border-slate-900 shadow-[4px_4px_0_rgba(31,41,55,0.14)] text-left mb-8 text-slate-700 leading-relaxed text-sm"><p class="font-bold mb-3">規則變更：</p><ul class="space-y-2"><li>所有指標初始值均為 <strong>100%</strong>。</li><li>錯誤決策將導致數值<strong>大幅驟降</strong>。</li><li>任一指標低於 <strong>35%</strong> 時，畫面將閃爍紅燈警告。</li><li>任一指標歸零，銜轉計畫立即失敗。</li></ul></div><div class="flex flex-wrap items-center justify-center gap-4"><button onclick="sgStartGame()" class="sys-button bg-slate-900 text-white font-black py-3 px-8 rounded-full text-sm">接受挑戰</button><button onclick="sgRevealReading()" class="sys-button bg-white text-slate-900 font-black py-3 px-8 rounded-full text-sm">繼續閱讀</button></div></div>
+              <div id="sgGame" class="hidden space-y-4"><div class="grid grid-cols-2 lg:grid-cols-4 gap-3"><div id="sgStat-student" class="sg-stat"><div class="flex justify-between mb-1 text-[11px] font-black uppercase"><span>學生收穫</span><span id="sgVal-student">100%</span></div><div class="w-full bg-slate-100 rounded-full h-2"><div id="sgBar-student" class="h-2 rounded-full bg-blue-600" style="width:100%"></div></div></div><div id="sgStat-professional" class="sg-stat"><div class="flex justify-between mb-1 text-[11px] font-black uppercase"><span>教學專業</span><span id="sgVal-professional">100%</span></div><div class="w-full bg-slate-100 rounded-full h-2"><div id="sgBar-professional" class="h-2 rounded-full bg-purple-600" style="width:100%"></div></div></div><div id="sgStat-energy" class="sg-stat"><div class="flex justify-between mb-1 text-[11px] font-black uppercase"><span>教學熱忱</span><span id="sgVal-energy">100%</span></div><div class="w-full bg-slate-100 rounded-full h-2"><div id="sgBar-energy" class="h-2 rounded-full bg-orange-600" style="width:100%"></div></div></div><div id="sgStat-admin" class="sg-stat"><div class="flex justify-between mb-1 text-[11px] font-black uppercase"><span>行政穩定</span><span id="sgVal-admin">100%</span></div><div class="w-full bg-slate-100 rounded-full h-2"><div id="sgBar-admin" class="h-2 rounded-full bg-green-600" style="width:100%"></div></div></div></div><div id="sgCard" class="sg-panel sg-frame overflow-hidden flex flex-col"><div class="sg-head"><div class="flex justify-between items-center mb-2"><span class="text-[11px] font-mono font-black opacity-80 tracking-[0.2em]">MONTH <span id="sgStageNum">1</span> / 5</span><i id="sgStageIcon" class="fas fa-landmark text-xl opacity-60"></i></div><h3 id="sgStageTitle" class="text-2xl font-black"></h3></div><div class="p-7 sg-scroll"><p id="sgStageDesc" class="text-slate-700 mb-6 leading-relaxed text-base font-medium"></p><div id="sgOptions" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div></div></div></div>
+              <div id="sgResult" class="hidden sg-panel sg-frame p-10 text-center border-t-[10px] border-blue-900"><div id="sgResIcon" class="text-7xl mb-6"></div><h3 id="sgResTitle" class="text-4xl font-black mb-4"></h3><p id="sgResDesc" class="text-slate-600 mb-10 max-w-3xl mx-auto text-xl leading-relaxed"></p><div id="sgResStats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div><div id="sgResActions" class="flex flex-wrap items-center justify-center gap-4"></div></div>
+            </div>
+            <div id="sgReading" class="hidden"><p id="sgReadingAnchor" class="mb-4">此外，中央補助由地方執行，各地作法不一。以台北市為例，申請需預先列明經費，但師資未定、學生中途轉入常使作業受阻。專案教師李璿瑞表示：「寫計畫不難，但前置作業會卡住。」再加上承辦人員頻繁更動，行政經驗難以累積，也限制資源運用成效。</p><div id="policySection" class="my-8"><details class="group bg-gray-50 border-2 border-blue-400 rounded-lg overflow-visible shadow-sm"><summary class="p-4 bg-blue-50 cursor-pointer"><div class="sys-button px-5 py-4 rounded-md flex items-center justify-between gap-4 bg-white"><div class="text-left"><div class="text-[10px] uppercase tracking-widest text-gray-800 mb-1">Interactive Button</div><div class="font-bold text-sm text-blue-800">點擊查看：各界提出的 3 種可能解方</div><div class="text-[11px] text-black mt-1">展開後可閱讀方案比較與角色視角分析</div></div><div class="flex flex-col items-end shrink-0"><span class="text-2xl font-bold leading-none text-blue-800">▶</span><span class="text-[10px] text-black mt-1">點擊展開／收合</span></div></div></summary><div class="p-6 space-y-6"><div class="bg-white p-4 border-l-4 border-violet-600 shadow-sm"><div class="font-bold text-base text-violet-800 mb-2">方案一：培養退休教師成為專才</div><p class="text-base leading-relaxed text-gray-700">李璿瑞指出，退休教師熟悉教學與學校運作，「可能會比較知道一些教學方法」；鄭雅文也強調，具證照者未必有實務經驗，若退休教師再經培訓補足華語專業，是現階段扶助跨轉生學習華語最適合的人選。吳勝學則進一步指出，華語扶助教學時數少、報酬低，「這項工作跟正職領月薪的完全不一樣」，對年輕人吸引力有限；相較之下，已有退休金的教師較能接受，成為現階段較可行的人力來源。</p></div><div class="bg-white p-4 border-l-4 border-blue-600 shadow-sm"><div class="font-bold text-base text-blue-800 mb-2">方案二：增進教支老師華語能力</div><p class="text-base leading-relaxed text-gray-700">鄭雅文認為，大量的教支老師依然是跨轉生的潛在師資，若其能通過<span class="inline-term"><button type="button" class="inline-trigger"><span>「華語文能力測驗」</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button><span class="tip">由教育部委託臺灣師範大學承辦，針對母語非華語者設計，供欲了解自身程度或在華語環境求學、工作者參加，評量包括聽力、閱讀、口語與寫作能力等項目。</span></span>中級，其字彙量介於2500至5000之間，「這樣就比較具有華語教學的能力。」</p></div><div class="bg-white p-4 border-l-4 border-green-600 shadow-sm"><div class="font-bold text-base text-green-800 mb-2">方案三：擴大大學生志工支援</div><p class="text-base leading-relaxed text-gray-700">台北市大安區新生國小志工微零（化名）表示，志工制度較具彈性，不必完全依循制式教學流程；且每週僅需40分鐘，學生可在不影響課業下穩定參與。林麗蟬亦認同，應鼓勵學生志工投入跨轉生的華語扶助教育，「讓學生在還沒進入教育職場之前，就先去接觸現場，是一件好事。」台灣越裔總會長陳凰鳳指出，由年齡相近的學長姊帶領，較易建立親近感。跨轉生達達亦分享，與20至25歲的陪伴者互動最自在，既能共享同齡話題，也能獲得成熟建議。</p></div><div id="personaAnalysisArea" class="bg-rose-50 p-4 border border-rose-200 rounded text-base italic text-rose-900"></div></div></details><div class="mt-6"><button onclick="unlockNext('chapter4')" class="w-full bg-blue-900 text-white py-3 font-bold text-xs shadow-lg sys-button">載入最終展望報告 (CH_04)</button></div></div></div>
+          </section>
+
+          <section id="chapter4" class="locked mb-12"><div class="bg-blue-900 text-white px-3 py-1 text-xs font-mono inline-block mb-4">FILE_04: 未來展望</div><h2 class="text-xl font-bold mb-4 border-b-2 border-blue-900 pb-2">擴大保障，減少漏洞</h2><p class="mb-8">跨國銜轉已成為全球性議題。政府目前已確立大致政策方向，也持續與澳洲、加拿大等移民國家相互交流；然而，基層單位對此未必已有一致認識。「課堂上的老師常把跨轉生誤認為一般新住民子女。」鄭雅文直言，若要擴充華語教學專業師資，仍須持續開設研習、推廣，讓更多學校教師理解並正視跨轉生的教育問題，「跨國銜轉學生這一議題由來已久，然而在教學現場卻不一定獲得應有的關注與重視。」他認為，唯有累積經驗，才能及早修正問題，避免困境於第一線教育現場持續擴大。</p><div class="bg-blue-900 text-white p-10 text-center shadow-2xl"><div class="text-[10px] font-mono text-blue-300 mb-4 tracking-tighter">>>> FINAL_ANALYSIS_COMPLETE <<<</div><h2 id="endingTitle" class="text-2xl font-bold mb-6"></h2><div id="endingText" class="text-sm text-blue-100 mb-8 leading-relaxed space-y-4 text-left"></div><p id="ctaText" class="font-bold text-amber-400 text-lg mb-8"></p><button onclick="window.open('https://unews.nccu.edu.tw/unews/transnationalstudentsi-education-immigration/', '_blank')" class="w-full bg-white text-blue-900 py-3 text-xs font-bold sys-button flex items-center justify-center gap-2"><span>點擊查看全文：〈黑板上看不懂的文字　跨國銜轉教育的教學難題〉</span></button></div></section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let state = { persona: '', progress: 0 };
+
+    const personaData = {
+      student: '跨國銜轉生 (STU-2024)',
+      teacher: '一般正式老師 (TEA-REG)',
+      admin: '政府行政單位 (GOV-ADM)',
+      supporter: '新住民語教學支援老師 (SUP-LAN)'
+    };
+
+    const beforeCountryData = [
+      { label: '越南', value: 40.7, color: '#312e81' },
+      { label: '菲律賓', value: 8.6, color: '#4338ca' },
+      { label: '美國', value: 8.5, color: '#4f46e5' },
+      { label: '印尼', value: 6.5, color: '#6366f1' },
+      { label: '中國', value: 3.8, color: '#7c3aed' },
+      { label: '泰國', value: 3.3, color: '#8b5cf6' },
+      { label: '日本', value: 3.0, color: '#a78bfa' },
+      { label: '緬甸', value: 2.1, color: '#c4b5fd' },
+      { label: '其他', value: 23.4, color: '#ddd6fe' }
+    ];
+
+    const quizData = {
+      student: {
+        q: '當你在課堂上完全聽不懂老師在說什麼時，你最真實的心理狀態是？',
+        a: [
+          { t: '覺得老師教太快，想舉手反應', c: false, f: '事實上，跨轉生常因語言能力不足而不敢舉手，即便想反應也缺乏對應詞彙。' },
+          { t: '覺得孤單、想回母國，最後對自己說「算了」', c: true, f: '這正是達達與王宜靜的共同心聲：「我就只能一個人消化」。' }
+        ]
+      },
+      teacher: {
+        q: '在班級有跨轉生時，導師面臨最急迫的專業挑戰是？',
+        a: [
+          { t: '不知道如何針對無中文基礎者調整評量與進度', c: true, f: '如報導所述，導師難以單獨為學生調整授課方式，導致學生第一份考卷常掛零。' },
+          { t: '被學生投訴考卷太難', c: false, f: '考卷難易度是針對全班，但跨轉生是完全看不懂，挑戰在於根本無法進入評量。' }
+        ]
+      },
+      admin: {
+        q: '雖然教育局設有明確 SOP 與「習得會議」，行政端最大挑戰是？',
+        a: [
+          { t: '預算過多導致審核公文堆積', c: false, f: '並非預算過多，而是人力媒合的前置作業困難。' },
+          { t: '雖有經費補助，但第一線媒合華語師資困難，常導致支援斷層', c: true, f: '專案教師直言：「寫計畫不難，但前置找人會卡住。」' }
+        ]
+      },
+      supporter: {
+        q: '若正式老師因進度壓力直接把教材塞給你時，你最真實的感受是？',
+        a: [
+          { t: '感到專業被否定，且擔心自己無法獨自負擔學生的所有進度', c: true, f: '孫雅雯提到，這讓教支老師感到被「丟包」，且教支老師主要角色應是語言橋樑。' },
+          { t: '非常高興，因為這樣可以完全照自己的方式教課', c: false, f: '缺乏與導師的教學分工，會讓教支老師面臨巨大的風險。' }
+        ]
+      }
+    };
+
+    const simData = {
+      student: {
+        q: '你坐在教室，黑板上的公式像天書。你想問老師什麼是「分母」，但你不知道這個詞怎麼說。',
+        a: ['選項 A: 努力比手畫腳嘗試溝通', '選項 B: 在課本畫畫並對自己說「算了」']
+      },
+      teacher: {
+        q: '班上銜轉生連注音都看不懂，但教學進度已到古文欣賞。下週就是段考，你該如何處理他的考卷？',
+        a: ['選項 A: 照發全班統一考卷，讓他盡力寫', '選項 B: 嘗試為他微調評量內容或額外標註注音']
+      },
+      admin: {
+        q: '學校反應申請了華語課程補助，卻找不到合適的對外華語老師。作為主管單位，你的下一步？',
+        a: ['選項 A: 告知學校依照規定找人，無人則預算繳回', '選項 B: 檢視培訓機制，思考如何整合退休師資等多元人力']
+      },
+      supporter: {
+        q: '導師將一疊華語課本塞給你，說：「老師，這孩子就交給你了，他完全聽不懂課。」',
+        a: ['選項 A: 概括承受，即便自己並未受過專業華語教學訓練', '選項 B: 與導師溝通教學分工，明確自己的支援定位']
+      }
+    };
+
+    const comments = {
+      student: '',
+      teacher: '👉 系統視角分析：若專業人力能真正入班協作，導師便不再需要於課綱與輔導之間孤立無援地拉扯。',
+      admin: '👉 系統視角分析：建立穩定的人力庫能大幅減少學校重複申請卻找不到人的行政空轉。',
+      supporter: '👉 系統視角分析：當專業與志工有明確分工，教支老師才能發揮文化橋樑優勢。'
+    };
+
+    const endingData = {
+      student: {
+        title: '你不是不努力，而是沒有鑰匙。',
+        text: ['跨轉生的困境不只是「中文不好」，而是整個系統常假設你早已看得懂規則、跟得上進度。', '當制度把語言落差當成個人適應問題，學生就只能把困難吞回肚子裡。'],
+        cta: '理解跨轉生，不只是同情，而是承認制度必須為這段斷層負責。'
+      },
+      teacher: {
+        title: '不是老師不願意，而是制度沒給工具。',
+        text: ['導師常在原班進度與個別調整之間被迫兩難。', '若沒有穩定支援與專業協作，老師再有心也只能用意志力硬撐。'],
+        cta: '當前線教學被要求獨自承擔跨語言斷層，最後耗損的不只是學生，也包括老師。'
+      },
+      admin: {
+        title: '有流程，不代表有能力真正接住人。',
+        text: ['即使公文與補助制度看似完善，真正的瓶頸常卡在師資媒合、承辦經驗與地方執行差異。', '制度若只停留在文件層面，支援就很容易在第一線斷裂。'],
+        cta: '真正有效的政策，不只要有規範，更要有可以落地的人力與協調機制。'
+      },
+      supporter: {
+        title: '你是橋樑，但不能永遠靠熱情補制度。',
+        text: ['教支老師常被期待扮演翻譯、陪伴者、溝通者，甚至變相代課。', '若缺乏明確分工與合理回報，熱情最終會被系統消耗。'],
+        cta: '當一項工作被認為「重要」，就不該只靠情感與責任感來支撐。'
+      }
+    };
+
+    const bbScenarios = [
+      {
+        language: '印尼文',
+        plain: 'Menyeberang jalan harus menggunakan zebra cross agar aman.',
+        original: "Menyeberang jalan harus menggunakan <span class='bb-highlight' data-anno='斑馬線'>zebra cross</span> agar aman.",
+        translation: '中文翻譯：穿越馬路必須使用斑馬線才安全。',
+        options: ['A. 穿越馬路前要先看左右來車', 'B. 穿越馬路要走斑馬線', 'C. 過馬路時應沿著路邊快走', 'D. 馬路上有條紋的地方不能通行'],
+        answer: 1,
+        note: '銜轉生雖然能看見字面上的 zebra cross，但若不知道中文對應為「斑馬線」，仍難以與生活常識連結。'
+      },
+      {
+        language: '印尼文',
+        plain: 'Ulat melalui proses metamorfosis menjadi kupu-kupu.',
+        original: "Ulat melalui proses <span class='bb-highlight' data-anno='羽化 (變態)'>metamorfosis</span> menjadi kupu-kupu.",
+        translation: '中文翻譯：毛毛蟲經過變態過程（羽化）變成蝴蝶。',
+        options: ['A. 毛毛蟲在成長過程中會先脫皮', 'B. 蝴蝶會逐漸長成毛毛蟲', 'C. 毛毛蟲羽化變成蝴蝶', 'D. 毛毛蟲和蝴蝶會一起生活在樹葉上'],
+        answer: 2,
+        note: '科學領域充滿像 metamorfosis 這樣的專業術語，直接的雙語標註能幫助學生快速進入學科邏輯。'
+      },
+      {
+        language: '印尼文',
+        plain: 'Melakukan pemanasan sangat penting sebelum berenang.',
+        original: "Melakukan <span class='bb-highlight' data-anno='伸展/熱身'>pemanasan</span> sangat penting sebelum berenang.",
+        translation: '中文翻譯：游泳前的伸展熱身是非常重要的。',
+        options: ['A. 游泳前必須先做熱身', 'B. 游泳前要先補充很多食物', 'C. 游泳課前應先練習憋氣', 'D. 游泳後再做伸展比較重要'],
+        answer: 0,
+        note: '體育課的指令往往伴隨動作。若文字與動作無法對應，學生在課堂中會感到疏離與焦慮。'
+      },
+      {
+        language: '印尼文',
+        plain: 'Sampah daur ulang dapat mengurangi volume sampah.',
+        original: "Sampah <span class='bb-highlight' data-anno='資源回收'>daur ulang</span> dapat mengurangi volume sampah.",
+        translation: '中文翻譯：做好資源回收可以減少垃圾產量。',
+        options: ['A. 垃圾應該集中放在同一個地方', 'B. 只要把垃圾分類就不會產生垃圾', 'C. 資源回收能減少垃圾產量', 'D. 垃圾在回收前都要先清洗乾淨'],
+        answer: 2,
+        note: '校園規範中的 daur ulang（回收）是日常必備詞。透過標註，能加速學生適應在地校園生活。'
+      }
+    ];
+    let bbIndex = 0;
+
+    const sgInit = { student: 100, professional: 100, energy: 100, admin: 100 };
+    let sg = { ...sgInit };
+    let sgIndex = 0;
+    const sgStages = [
+      {
+        title: '誰的責任？黑板前的孤島',
+        desc: '11歲的跨轉生達達剛入學，完全不懂華語。校方行政為了省麻煩，直接建議讓他在教室「自然習得」，不安排額外課程。你怎麼做？',
+        icon: 'fa-island-tropical',
+        options: [
+          { text: '聽從行政建議：相信環境的力量，不額外增加各方負擔。', impact: { student: -55, professional: -30, energy: 0, admin: 20 }, feedback: '達達在教室坐了一個月，一個字都沒學會，且開始出現嚴重的拒學傾向。' },
+          { text: '強力爭取開班：要求依法申請銜轉計畫，儘管行政手續繁瑣。', impact: { student: 10, professional: 20, energy: -5, admin: -45 }, feedback: '開班成功，但行政處室對你充滿敵意，核銷文件被反覆刁難。' },
+          { text: '尋找替代役輔導：請校內役男每天帶他讀繪本。', impact: { student: 15, professional: -40, energy: 10, admin: -15 }, feedback: '役男退伍後支援立即斷層，達達再度淪為「被遺忘的孩子」。' },
+          { text: '拜託退休老師：動用私人人情請退休老師回校幫忙。', impact: { student: 20, professional: 10, energy: -35, admin: 0 }, feedback: '教學穩定了，但你欠下巨大的人情債，且老師體力不堪負荷。' }
+        ]
+      },
+      {
+        title: '專業師資的崩潰邊緣',
+        desc: '跨轉計畫需要具證照的華語師資，但因鐘點費過低且路途遙遠，全區唯一有證照的老師決定離職去補習班。你如何挽留？',
+        icon: 'fa-user-tie',
+        options: [
+          { text: '動之以情：強調學生的受教權，請求老師基於使命感留下來。', impact: { student: 0, professional: -15, energy: -60, admin: 10 }, feedback: '老師冷淡表示：「使命感不能付房租。」隨後遞出辭呈。' },
+          { text: '挪用預算津貼：私下將其他雜支項目轉為老師的「研發津貼」。', impact: { student: 15, professional: 20, energy: 25, admin: -55 }, feedback: '留住了老師，但校長在行政會議上因違規疑慮將你罵到狗血淋頭。' },
+          { text: '找教支老師代打：請懂學生母語的老師兼任。', impact: { student: 5, professional: -50, energy: -20, admin: 10 }, feedback: '老師反映中文文法太難教，達達的發音開始出現嚴重偏差。' },
+          { text: '增加行政工作：要求老師帶更多學生以增加鐘點數。', impact: { student: -20, professional: 15, energy: -50, admin: 15 }, feedback: '老師體力透支，在課堂上直接暈倒，計畫被迫停擺兩週。' }
+        ]
+      },
+      {
+        title: '行政迷霧：消失的補助',
+        desc: '縣市政府窗口換人，新任承辦人推翻之前的口頭承諾，認定某些教材費不符規格，要求學校自行吸收已支出的五萬元。怎麼辦？',
+        icon: 'fa-cloud',
+        options: [
+          { text: '自行籌措經費：發起校內義賣或拜託家長會出錢補洞。', impact: { student: -10, professional: 0, energy: -20, admin: -50 }, feedback: '錢湊到了，但行政人員對此項目的「風險性」產生極度恐懼。' },
+          { text: '放棄補助：直接停課，直到經費爭議解決為止。', impact: { student: -65, professional: -20, energy: -15, admin: 30 }, feedback: '達達在黃金銜接期被迫中斷學習，之前的努力幾乎化為烏有。' },
+          { text: '向上級投訴：向教育部或媒體反映基層承辦人的刁難行為。', impact: { student: 0, professional: 10, energy: 10, admin: -70 }, feedback: '經費火速撥放，但該縣市承辦人從此處處針對你們學校。' },
+          { text: '請求專業團隊介入：請高師大專案辦公室出面協調政策解釋。', impact: { student: 10, professional: 15, energy: 10, admin: -20 }, feedback: '專業團隊擋下了不合理的審核，但行政溝通耗費了你兩個月的精力。' }
+        ]
+      },
+      {
+        title: '零分考卷的打擊',
+        desc: '達達在原班的國語測驗拿到 0 分，他在課堂上開始撕毀課本。導師反映這影響了班級秩序。你該如何介入？',
+        icon: 'fa-heart-crack',
+        options: [
+          { text: '改採替代評量：要求原班導師不給分數，改以質性觀察。', impact: { student: 30, professional: -20, energy: 10, admin: -45 }, feedback: '達達壓力減輕，但其他學生家長集體寫信抗議成績不公。' },
+          { text: '加強課後輔導：每天放學後留校兩小時強制補課。', impact: { student: -45, professional: 25, energy: -20, admin: 10 }, feedback: '識字量提升，但達達對學校產生了生理性的嘔吐反應。' },
+          { text: '安排母語夥伴：找同鄉學長陪讀，舒緩情緒而非專注學術。', impact: { student: 40, professional: -35, energy: 15, admin: 5 }, feedback: '達達情緒穩定了，但期末考依然交白卷，專業學習進度停滯。' },
+          { text: '無視個別差異：強調所有學生標準一致。', impact: { student: -70, professional: 10, energy: -10, admin: 30 }, feedback: '達達完全放棄學習，開始在課堂中搞破壞，最終被迫轉學。' }
+        ]
+      },
+      {
+        title: '最後的馬拉松：永續',
+        desc: '計畫結束了。你必須決定這套體系的未來。面對不斷湧入的新孩子，你的最終願景是？',
+        icon: 'fa-infinity',
+        options: [
+          { text: '拼命推動月薪制：要求國家編列正式華語教師員額。', impact: { student: 20, professional: 40, energy: 30, admin: -80 }, feedback: '你犧牲了平步青雲的機會，但為臺灣教育史留下了制度基石。' },
+          { text: '退守行政防線：建立極其嚴密的標準作業流程。', impact: { student: -40, professional: 10, energy: 10, admin: 60 }, feedback: '行政再也不會出錯，但計畫從此失去了靈魂。' },
+          { text: '全面數位化：用 AI 取代所有教支老師。', impact: { student: -30, professional: 25, energy: 20, admin: 40 }, feedback: '成本極低，但無數個達達在螢幕前依然感到孤單。' },
+          { text: '社區權限下放：將經費全數撥給民間協會。', impact: { student: 25, professional: -50, energy: 20, admin: 20 }, feedback: '充滿人情味但教學毫無標準，銜轉教育退回了雜牌軍時代。' }
+        ]
+      }
+    ];
+
+    function setClock(){const d=new Date();const p=n=>String(n).padStart(2,'0');document.getElementById('sysTime').textContent=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`}
+    setClock();setInterval(setClock,1000);
+
+    function createLandingGreetings(){
+      const layer=document.getElementById('landingHelloLayer');
+      if(!layer) return;
+      layer.innerHTML='';
+      const items=[
+        {text:'สวัสดี',cls:'is-indigo',size:60,left:14,top:8},{text:'Bonjour',cls:'is-violet',size:24,left:34,top:7},{text:'Hello',cls:'is-blue',size:54,left:78,top:8},{text:'Halo',cls:'is-amber',size:22,left:90,top:9},
+        {text:'Xin chào',cls:'is-blue',size:32,left:10,top:26},{text:'你好',cls:'is-violet',size:46,left:89,top:28},{text:'Hello',cls:'is-slate',size:24,left:10,top:44},{text:'ជំរាបសួរ',cls:'is-slate',size:18,left:90,top:46},
+        {text:'Halo',cls:'is-amber',size:20,left:10,top:63},{text:'Xin chào',cls:'is-indigo',size:34,left:89,top:65},{text:'你好',cls:'is-blue',size:44,left:12,top:82},{text:'Bonjour',cls:'is-slate',size:18,left:31,top:94},
+        {text:'Hello',cls:'is-blue',size:64,left:52,top:95},{text:'សួស្តី',cls:'is-indigo',size:26,left:73,top:94},{text:'Halo',cls:'is-amber',size:22,left:89,top:83}
+      ];
+      items.forEach((it,i)=>{const el=document.createElement('span');el.className=`hello ${it.cls}`;el.textContent=it.text;el.style.fontSize=`${it.size}px`;el.style.left=`${it.left}%`;el.style.top=`${it.top}%`;el.style.animationDuration=`${4.2+(i%5)*.4}s`;el.style.animationDelay=`${(i%6)*.18}s`;layer.appendChild(el);});
+    }
+
+    function updateProgress(n){state.progress=n;document.getElementById('systemProgressBar').style.width=`${n}%`;document.getElementById('progressPercent').textContent=`${n}%`}
+
+    function unlockNext(id){
+      const el=document.getElementById(id);
+      if(el){el.classList.remove('locked');el.classList.add('unlocked');el.scrollIntoView({behavior:'smooth',block:'start'});}
+      if(id==='chapter2') updateProgress(50);
+      if(id==='chapter3') updateProgress(75);
+      if(id==='chapter4'){ updateProgress(100); renderEnding(); }
+    }
+
+    function selectPersona(p){
+      state.persona=p;
+      document.getElementById('currentPersonaDisplay').textContent=personaData[p]||'GUEST';
+      document.getElementById('sidebar').style.display='block';
+      document.getElementById('personaSection').classList.add('hidden');
+      unlockNext('chapter1');
+      updateProgress(25);
+      initSim();
+    }
+
+    function showPersonaQuiz(){
+      const narrative=document.getElementById('chapter1Narrative');
+      const quizSection=document.getElementById('quizSection');
+      const q=quizData[state.persona];
+      if(narrative) narrative.classList.remove('hidden');
+      if(!q || !quizSection) return;
+      quizSection.classList.remove('hidden');
+      document.getElementById('quizQuestion').textContent=q.q;
+      const wrap=document.getElementById('quizContent');
+      wrap.innerHTML='';
+      document.getElementById('quizResult').classList.add('hidden');
+      q.a.forEach((x)=>{
+        const b=document.createElement('button');
+        b.className='sys-button bg-white p-3 text-xs text-left';
+        b.textContent=x.t;
+        b.onclick=()=>submitQuiz(x);
+        wrap.appendChild(b);
+      });
+      narrative.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function submitQuiz(item){
+      const wrap=document.getElementById('quizContent');
+      [...wrap.children].forEach(b=>b.disabled=true);
+      document.getElementById('quizFeedbackText').textContent=item.f;
+      document.getElementById('quizResult').classList.remove('hidden');
+    }
+
+    function submitCountryQuiz(correct,btn){
+      const content=document.getElementById('countryQuizContent');
+      const buttons=content.querySelectorAll('.country-option');
+      const correctBtn=content.querySelector('.correct-country-option');
+      buttons.forEach(b=>b.disabled=true);
+      if(correct){
+        content.classList.add('bg-green-100');
+        btn.classList.remove('bg-white');
+        btn.classList.add('bg-green-500','text-white');
+        document.getElementById('countryQuizFeedbackText').innerHTML='<strong>系統確認正確：</strong> 目前跨轉生來臺前居住國最多的是越南。';
+      }else{
+        content.classList.add('bg-red-100');
+        btn.classList.remove('bg-white');
+        btn.classList.add('bg-red-500','text-white');
+        correctBtn.classList.remove('bg-white');
+        correctBtn.classList.add('bg-green-500','text-white');
+        document.getElementById('countryQuizFeedbackText').innerHTML='<strong>系統分析偏差：</strong> 正確答案是「越南」。';
+      }
+      document.getElementById('countryQuizResult').classList.remove('hidden');
+      document.getElementById('countryCharts').classList.remove('hidden');
+      renderCountryCharts();
+    }
+
+    function polarToCartesian(cx,cy,r,a){const rad=(a-90)*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)}}
+    function describeArc(cx,cy,r,s,e){const start=polarToCartesian(cx,cy,r,e);const end=polarToCartesian(cx,cy,r,s);const laf=e-s<=180?'0':'1';return`M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${laf} 0 ${end.x} ${end.y} Z`}
+    function renderPieChart(containerId,data){
+      const el=document.getElementById(containerId);
+      if(!el||!Array.isArray(data)) return;
+      const width=440,height=280,cx=220,cy=142,r=82,labelR=126,total=data.reduce((s,x)=>s+x.value,0);
+      const ns='http://www.w3.org/2000/svg';
+      const svg=document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+      svg.classList.add('pie');
+      let cur=0;
+      data.forEach(item=>{
+        const angle=item.value/total*360;const s=cur,e=cur+angle,m=s+angle/2;
+        const g=document.createElementNS(ns,'g');
+        const p=document.createElementNS(ns,'path');
+        p.setAttribute('d',describeArc(cx,cy,r,s,e));
+        p.setAttribute('fill',item.color);
+        p.setAttribute('class','slice');
+        const dx=Math.cos((m-90)*Math.PI/180)*12,dy=Math.sin((m-90)*Math.PI/180)*12;
+        p.addEventListener('mouseenter',()=>{p.classList.add('active');p.setAttribute('transform',`translate(${dx.toFixed(2)} ${dy.toFixed(2)})`)});
+        p.addEventListener('mouseleave',()=>{p.classList.remove('active');p.removeAttribute('transform')});
+        const lp=polarToCartesian(cx,cy,labelR,m);
+        const line=document.createElementNS(ns,'line');
+        line.setAttribute('x1',polarToCartesian(cx,cy,r+4,m).x);
+        line.setAttribute('y1',polarToCartesian(cx,cy,r+4,m).y);
+        line.setAttribute('x2',lp.x);line.setAttribute('y2',lp.y);line.setAttribute('class','labelline');
+        const txt=document.createElementNS(ns,'text');
+        txt.setAttribute('x',lp.x);txt.setAttribute('y',lp.y);txt.setAttribute('class','label');
+        txt.setAttribute('text-anchor',lp.x>cx?'start':'end');txt.setAttribute('dominant-baseline','middle');
+        txt.textContent=`${item.label} ${item.value}%`;
+        g.appendChild(p);g.appendChild(line);g.appendChild(txt);svg.appendChild(g);cur+=angle;
+      });
+      el.innerHTML='';el.appendChild(svg);
+    }
+    function renderCountryCharts(){renderPieChart('beforeCountryChart',beforeCountryData)}
+
+    function initSim(){
+      const data=simData[state.persona];
+      if(!data) return;
+      document.getElementById('simQuestionText').textContent=data.q;
+      const box=document.getElementById('simContent');
+      box.innerHTML='';
+      document.getElementById('simFeedback').classList.add('hidden');
+      data.a.forEach((t,i)=>{
+        const b=document.createElement('button');
+        b.className='w-full sys-button bg-gray-900 border border-green-400 p-3 hover:bg-green-400 hover:text-black transition';
+        b.textContent=t;
+        b.onclick=()=>playSim(i+1);
+        box.appendChild(b);
+      });
+    }
+
+    function playSim(choice){
+      const map={
+        student:{1:'你試圖溝通，但語言缺口讓每個手勢都顯得支離破碎。',2:'你把困難吞回肚子裡，最後只剩沉默。'},
+        teacher:{1:'統一考卷看似公平，對跨轉生卻可能等於直接宣告失敗。',2:'調整評量雖然麻煩，卻是讓學生真正進入學習的第一步。'},
+        admin:{1:'把責任交回學校，只會讓原本就稀缺的人力更加斷裂。',2:'真正的行政支持，不只是撥經費，而是建立能接住學生的師資系統。'},
+        supporter:{1:'當你被迫概括承受，熱情很快就會被制度磨光。',2:'明確分工，才能讓支援成為橋樑，而不是替代正規教學的補丁。'}
+      };
+      document.getElementById('simResultText').textContent=map[state.persona][choice];
+      const area=document.getElementById('personaAnalysisArea');
+      const txt=comments[state.persona]||'';
+      area.textContent=txt;
+      area.style.display=txt?'block':'none';
+      document.getElementById('simPersonaText').textContent=txt;
+      document.getElementById('simFeedback').classList.remove('hidden');
+    }
+
+    function scrollToChapter2Quiz(){document.getElementById('chapter2QuizSection').scrollIntoView({behavior:'smooth',block:'start'})}
+    function submitChapter2Quiz(correct,btn){
+      const wrap=document.getElementById('chapter2QuizContent');
+      const buttons=wrap.querySelectorAll('.chapter2-option');
+      const right=wrap.querySelector('.correct-chapter2-option');
+      buttons.forEach(b=>b.disabled=true);
+      if(correct){
+        btn.classList.add('bg-green-500','text-white');
+        document.getElementById('chapter2QuizFeedbackText').innerHTML='<strong>系統確認正確：</strong> 關鍵不在是否會學生母語，而在是否具備華語教學的專業背景。';
+      }else{
+        btn.classList.add('bg-red-500','text-white');
+        right.classList.add('bg-green-500','text-white');
+        document.getElementById('chapter2QuizFeedbackText').innerHTML='<strong>系統分析偏差：</strong> 正確答案是「具備華語教學的專業背景」。';
+      }
+      document.getElementById('chapter2QuizResult').classList.remove('hidden');
+    }
+
+    function bbStartGame(){document.getElementById('bb-start').classList.add('hidden');document.getElementById('bb-shell').classList.remove('hidden');bbLoad(0)}
+    function bbLoad(i){
+      bbIndex=i;
+      document.getElementById('bbCompact').classList.remove('summary');
+      const d=bbScenarios[i];
+      document.querySelectorAll('.bb-progress-dot').forEach((dot,idx)=>dot.classList.toggle('active',idx===i));
+      document.getElementById('bbMeta').innerHTML=`<span class="bb-badge">語言：${d.language}</span>`;
+      document.getElementById('bbText').innerHTML=`<div>${d.plain}</div>`;
+      const wrap=document.getElementById('bbOptions');
+      wrap.innerHTML='';
+      d.options.forEach((t,idx)=>{const b=document.createElement('button');b.className='bb-option';b.textContent=t;b.onclick=()=>bbAnswer(idx);wrap.appendChild(b)});
+      document.getElementById('bbBoard').classList.remove('hidden');
+      document.getElementById('bbQuiz').classList.remove('hidden');
+      document.getElementById('bbControls').classList.add('hidden');
+      document.getElementById('bbSummary').classList.add('hidden');
+      document.getElementById('bbProgress').classList.remove('hidden');
+    }
+    function bbAnswer(idx){
+      const d=bbScenarios[bbIndex];
+      const buttons=[...document.querySelectorAll('.bb-option')];
+      buttons.forEach(b=>b.disabled=true);
+      if(idx===d.answer) buttons[idx].classList.add('correct');
+      else { buttons[idx].classList.add('wrong'); buttons[d.answer].classList.add('correct'); }
+      document.getElementById('bbText').innerHTML=`<div class="bb-detail"><div class="font-bold bb-original">${d.original}</div><div class="bb-translation">${d.translation}</div><div class="bb-note">${d.note}</div></div>`;
+      document.getElementById('bbControls').classList.remove('hidden');
+    }
+    function bbNext(){
+      if(bbIndex<bbScenarios.length-1) bbLoad(bbIndex+1);
+      else {
+        document.getElementById('bbQuiz').classList.add('hidden');
+        document.getElementById('bbControls').classList.add('hidden');
+        document.getElementById('bbBoard').classList.add('hidden');
+        document.getElementById('bbProgress').classList.add('hidden');
+        document.getElementById('bbSummary').classList.remove('hidden');
+        document.getElementById('bbCompact').classList.add('summary');
+      }
+    }
+    function bbRestart(){document.getElementById('bbCompact').classList.remove('summary');document.getElementById('bb-start').classList.remove('hidden');document.getElementById('bb-shell').classList.add('hidden');bbIndex=0}
+
+    function sgStartGame(){document.getElementById('sgStart').classList.add('hidden');document.getElementById('sgResult').classList.add('hidden');document.getElementById('sgGame').classList.remove('hidden');sg={...sgInit};sgIndex=0;sgRender();sgUpdateUI()}
+    function sgUpdateUI(){
+      let emergency=false,gameOver=false;
+      ['student','professional','energy','admin'].forEach(k=>{
+        document.getElementById('sgVal-'+k).textContent=`${sg[k]}%`;
+        document.getElementById('sgBar-'+k).style.width=`${Math.max(0,Math.min(100,sg[k]))}%`;
+        const card=document.getElementById('sgStat-'+k);
+        if(sg[k]<35){card.classList.add('sg-shake');emergency=true}else card.classList.remove('sg-shake');
+        if(sg[k]<=0) gameOver=true;
+      });
+      document.getElementById('sgBlock').classList.toggle('sg-emergency',emergency);
+      if(gameOver){sgEnd(false);return true}
+      return false;
+    }
+    function sgRender(){
+      if(sgIndex>=sgStages.length){sgEnd(true);return}
+      const s=sgStages[sgIndex];
+      document.getElementById('sgStageNum').textContent=sgIndex+1;
+      document.getElementById('sgStageTitle').textContent=s.title;
+      document.getElementById('sgStageDesc').textContent=s.desc;
+      document.getElementById('sgStageIcon').className=`fas ${s.icon} text-xl opacity-60`;
+      const wrap=document.getElementById('sgOptions');
+      wrap.innerHTML='';
+      s.options.forEach(o=>{const b=document.createElement('button');b.className='sg-option';b.innerHTML=`<span class="font-bold text-slate-900 text-[15px]">${o.text}</span>`;b.onclick=()=>sgChoose(o);wrap.appendChild(b)});
+    }
+    function sgChoose(o){
+      Object.keys(o.impact).forEach(k=>sg[k]=Math.min(100,Math.max(-5,sg[k]+o.impact[k])));
+      if(sgUpdateUI()) return;
+      document.getElementById('sgCard').innerHTML=`<div class="p-10 text-center bg-slate-50 sg-frame flex flex-col justify-center"><div class="inline-block text-[10px] font-mono tracking-[0.18em] text-blue-900 bg-blue-50 border border-blue-900 px-3 py-1 mb-5">SYSTEM FEEDBACK</div><p class="text-2xl font-black text-slate-800 mb-8 leading-tight">${o.feedback}</p><button onclick="sgNext()" class="sys-button bg-slate-900 text-white px-10 py-3 rounded-full font-black text-sm">繼續前進</button></div>`;
+    }
+    function sgNext(){
+      sgIndex++;
+      document.getElementById('sgCard').innerHTML=`<div class="sg-head"><div class="flex justify-between items-center mb-2"><span class="text-[11px] font-mono font-black opacity-80 tracking-[0.2em]">MONTH <span id="sgStageNum"></span> / ${sgStages.length}</span><i id="sgStageIcon" class="fas fa-school text-xl opacity-60"></i></div><h3 id="sgStageTitle" class="text-2xl font-black"></h3></div><div class="p-7 sg-scroll"><p id="sgStageDesc" class="text-slate-700 mb-6 leading-relaxed text-base font-medium"></p><div id="sgOptions" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div></div>`;
+      sgRender();
+    }
+    function sgEnd(win){
+      document.getElementById('sgGame').classList.add('hidden');
+      document.getElementById('sgBlock').classList.remove('sg-emergency');
+      document.getElementById('sgResult').classList.remove('hidden');
+      document.getElementById('sgResIcon').textContent=win?'🎖️':'🥀';
+      document.getElementById('sgResTitle').textContent=win?'奇蹟的守護者':'計畫終結：被遺忘的黑板';
+      document.getElementById('sgResDesc').textContent=win?'在重重致命扣分的現實下，你竟然成功走完了這段路。你保住了學生的學習光火，也讓專業師資在貧瘠的土壤中扎根。':'指標歸零。你的決策雖可能出自好意，但現實的殘酷最終擊垮了這座橋樑。';
+      document.getElementById('sgResStats').innerHTML=`<div class="p-4 bg-slate-50 border-2 border-slate-900 shadow-[4px_4px_0_rgba(31,41,55,0.12)]"><div class="text-[11px] text-blue-700 font-mono font-black mb-1">學生收穫</div><div class="text-3xl font-black">${Math.max(0,sg.student)}%</div></div><div class="p-4 bg-slate-50 border-2 border-slate-900 shadow-[4px_4px_0_rgba(31,41,55,0.12)]"><div class="text-[11px] text-violet-700 font-mono font-black mb-1">教學專業</div><div class="text-3xl font-black">${Math.max(0,sg.professional)}%</div></div><div class="p-4 bg-slate-50 border-2 border-slate-900 shadow-[4px_4px_0_rgba(31,41,55,0.12)]"><div class="text-[11px] text-orange-700 font-mono font-black mb-1">教學熱忱</div><div class="text-3xl font-black">${Math.max(0,sg.energy)}%</div></div><div class="p-4 bg-slate-50 border-2 border-slate-900 shadow-[4px_4px_0_rgba(31,41,55,0.12)]"><div class="text-[11px] text-green-700 font-mono font-black mb-1">行政穩定</div><div class="text-3xl font-black">${Math.max(0,sg.admin)}%</div></div>`;
+      document.getElementById('sgResActions').innerHTML=win?`<button onclick="sgRevealReading()" class="sys-button bg-white text-slate-900 px-10 py-3 rounded-full font-black text-sm">繼續閱讀</button>`:`<button onclick="sgStartGame()" class="sys-button bg-slate-900 text-white px-10 py-3 rounded-full font-black text-sm">重新啟動計畫</button><button onclick="sgRevealReading()" class="sys-button bg-white text-slate-900 px-10 py-3 rounded-full font-black text-sm">繼續閱讀</button>`;
+    }
+    function sgRevealReading(){document.getElementById('sgReading').classList.remove('hidden');document.getElementById('sgReadingAnchor').scrollIntoView({behavior:'smooth',block:'start'})}
+
+    function renderEnding(){const d=endingData[state.persona];if(!d) return;document.getElementById('endingTitle').textContent=d.title;document.getElementById('endingText').innerHTML=d.text.map(x=>`<p>${x}</p>`).join('');document.getElementById('ctaText').textContent=d.cta}
+
+    function showModal(type){
+      const modal=document.getElementById('modal');
+      const views={case:{t:'個案管理',b:'<p>本頁依不同角色帶領讀者理解跨國銜轉生在校園中的處境與制度斷層。</p>'},stat:{t:'統計報表',b:'<p>核心數據：113 學年度高中以下新住民在學子女約 26.5 萬人，占全體學生 6.7%。</p>'},teach:{t:'教學支援',b:'<p>教學支援核心：穩定師資、華語專業、明確分工。</p>'},admin_work:{t:'行政作業',b:'<p>行政難題包括：補助申請、師資媒合、地方執行差異與承辦經驗斷裂。</p>'}};
+      const v=views[type];
+      modal.innerHTML=`<div class="modal-card"><div class="modal-top"><span>${v.t}</span><button onclick="closeModal()" class="sys-button text-white hover:text-red-400 font-bold bg-gray-700 px-3 py-1 rounded">✕</button></div><div class="modal-body-inner">${v.b}</div></div>`;
+      modal.style.display='flex';
+    }
+    function closeModal(){document.getElementById('modal').style.display='none'}
+
+    function selfTests(){
+      console.assert(typeof selectPersona === 'function', 'selectPersona should be defined');
+      console.assert(Array.isArray(beforeCountryData), 'beforeCountryData should be an array');
+      console.assert(beforeCountryData.length > 0, 'beforeCountryData should not be empty');
+      console.assert(typeof renderCountryCharts === 'function', 'renderCountryCharts should be defined');
+      console.assert(typeof showPersonaQuiz === 'function', 'showPersonaQuiz should be defined');
+      console.assert(typeof bbStartGame === 'function', 'bbStartGame should be defined');
+      console.assert(typeof sgStartGame === 'function', 'sgStartGame should be defined');
+    }
+
+    function resetStory(){
+      state={persona:'',progress:0};
+      document.getElementById('sidebar').style.display='none';
+      document.getElementById('currentPersonaDisplay').textContent='GUEST';
+      document.querySelectorAll('#articleContent section').forEach(s=>{s.classList.remove('unlocked');s.classList.add('locked')});
+      document.getElementById('personaSection').classList.remove('hidden');
+      document.getElementById('chapter1Narrative').classList.add('hidden');
+      document.getElementById('quizSection').classList.add('hidden');
+      document.getElementById('countryQuizResult').classList.add('hidden');
+      document.getElementById('countryCharts').classList.add('hidden');
+      document.getElementById('countryQuizContent').className='grid gap-2 transition-colors duration-300';
+      document.querySelectorAll('.country-option').forEach(b=>{b.disabled=false;b.className='sys-button bg-white p-3 text-xs text-left country-option'+(b.classList.contains('correct-country-option')?' correct-country-option':'')});
+      document.getElementById('chapter2QuizResult').classList.add('hidden');
+      document.querySelectorAll('.chapter2-option').forEach(b=>{b.disabled=false;b.classList.remove('bg-green-500','bg-red-500','text-white')});
+      document.getElementById('sgReading').classList.add('hidden');
+      document.getElementById('sgStart').classList.remove('hidden');
+      document.getElementById('sgGame').classList.add('hidden');
+      document.getElementById('sgResult').classList.add('hidden');
+      bbRestart();
+      updateProgress(0);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function initPage(){
+      createLandingGreetings();
+      selfTests();
+      resetStory();
+      document.getElementById('personaSection').classList.remove('hidden');
+    }
+
+    initPage();
+  </script>
+</body>
+</html>
